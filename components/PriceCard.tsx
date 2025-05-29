@@ -1,6 +1,5 @@
 
 import { PriceResult } from '../types/perfume'
-import { ExternalLinkIcon } from '@heroicons/react/24/outline'
 
 interface PriceCardProps {
   result: PriceResult
@@ -75,7 +74,7 @@ export default function PriceCard({ result, isBestDeal }: PriceCardProps) {
           className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center"
         >
           <span>View on {site}</span>
-          <ExternalLinkIcon className="ml-2 h-4 w-4" />
+          <span className="ml-2">↗</span>
         </a>
       </div>
     </div>
