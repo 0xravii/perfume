@@ -46,6 +46,135 @@ class ComparisonResult(BaseModel):
 SITES = {
     "FragranceNet": {
         "base_url": "https://www.fragrancenet.com",
+        "search_url": "https://www.fragrancenet.com/search?q={}",
+    },
+    "FragranceX": {
+        "base_url": "https://www.fragrancex.com", 
+        "search_url": "https://www.fragrancex.com/search?q={}",
+    },
+    "FragranceShop": {
+        "base_url": "https://www.fragranceshop.com",
+        "search_url": "https://www.fragranceshop.com/search?q={}",
+    }
+}
+
+class PerfumeScraper:
+    def __init__(self):
+        self.session = None
+        
+    async def __aenter__(self):
+        timeout = aiohttp.ClientTimeout(total=30)
+        self.session = aiohttp.ClientSession(timeout=timeout)
+        return self
+        
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.session:
+            await self.session.close()
+    
+    def extract_price(self, price_text: str) -> Optional[float]:
+        """Extract numeric price from text"""
+        if not price_text:
+            return None
+        # Remove currency symbols and extract numbers
+        price_match = re.search(r'[\d,]+\.?\d*', price_text.replace(',', ''))
+        if price_match:
+            try:
+                return float(price_match.group())
+            except ValueError:
+                return None
+        return None
+    
+    def extract_size(self, size_text: str) -> Optional[str]:
+        """Extract size information from text"""
+        if not size_text:
+            return None
+        # Look for ml, oz patterns
+        size_match = re.search(r'(\d+(?:\.\d+)?)\s*(ml|oz)', size_text.lower())
+        if size_match:
+            return f"{size_match.group(1)}{size_match.group(2)}"
+        return None
+    
+    def calculate_price_per_ml(self, price: float, size_str: str) -> Optional[float]:
+        """Calculate price per ml"""
+        if not price or not size_str:
+            return None
+        
+        size_match = re.search(r'(\d+(?:\.\d+)?)\s*(ml|oz)', size_str.lower())
+        if size_match:
+            size_num = float(size_match.group(1))
+            unit = size_match.group(2)
+            
+            # Convert oz to ml if needed (1 oz = 29.5735 ml)
+            if unit == 'oz':
+                size_num *= 29.5735
+                
+            return round(price / size_num, 2) if size_num > 0 else None
+        return None
+
+    async def scrape_site(self, site_name: str, site_config: dict, query: str) -> List[PriceResult]:
+        """Scrape a single site for perfume prices"""
+        results = []
+        
+        try:
+            search_url = site_config["search_url"].format(query.replace(' ', '%20'))
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            async with self.session.get(search_url, headers=headers) as response:
+                if response.status != 200:
+                    logger.warning(f"Failed to fetch {site_name}: {response.status}")
+                    return results
+                
+                html = await response.text()
+                soup = BeautifulSoup(html, 'html.parser')
+                
+                # Generic scraping - look for common price patterns
+                price_elements = soup.find_all(['span', 'div'], class_=re.compile(r'price|cost|amount', re.I))[:5]
+                
+                for i, price_elem in enumerate(price_elements):
+                    price_text = price_elem.get_text(strip=True)
+                    price = self.extract_price(price_text)
+                    
+                    if price and price > 0:
+                        # Try to find size info nearby
+                        size_text = ""
+                        parent = price_elem.parent
+                        if parent:
+                            size_text = parent.get_text()
+                        
+                        size = self.extract_size(size_text)
+                        price_per_ml = self.calculate_price_per_ml(price, size) if size else None
+                        
+                        result = PriceResult(
+                            site=site_name,
+                            price=price,
+                            size=size,
+                            price_per_ml=price_per_ml,
+                            url=search_url,
+                            stock_status="Available",
+                            image_url=None
+                        )
+                        results.append(result)
+                        
+                        if len(results) >= 3:  # Limit results per site
+                            break
+            
+        except Exception as e:
+            logger.error(f"Error scraping {site_name}: {e}")
+        
+        return results
+
+class ComparisonResult(BaseModel):
+    perfume_name: str
+    results: List[PriceResult]
+    best_deal: Optional[PriceResult]
+
+# Site configurations
+SITES = {
+    "FragranceNet": {
+        "base_url": "https://www.fragrancenet.com",
         "search_url": "https://www.fragrancenet.com/search?searchTerm={query}",
         "selectors": {
             "products": ".product-item",

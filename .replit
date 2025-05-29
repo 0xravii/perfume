@@ -6,7 +6,7 @@ channel = "stable-24_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Full Stack Dev"
+runButton = "Setup and Run"
 
 [[workflows.workflow]]
 name = "Full Stack Dev"
@@ -20,6 +20,23 @@ args = "npm install"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "pip install -r requirements.txt"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Setup and Run"
+author = 38418665
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install -r requirements.txt"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
