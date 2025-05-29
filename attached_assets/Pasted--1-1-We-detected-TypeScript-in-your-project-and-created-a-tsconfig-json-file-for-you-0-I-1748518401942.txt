@@ -1,0 +1,153 @@
+[1] 
+[1]    We detected TypeScript in your project and created a tsconfig.json file for you.
+[0] INFO:     172.31.128.146:42218 - "GET / HTTP/1.1" 200 OK
+[1]  ✓ Ready in 2.5s
+[0] INFO:     172.31.128.146:32944 - "GET / HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:37580 - "GET / HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:38362 - "GET / HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:41572 - "GET / HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:41572 - "GET / HTTP/1.1" 200 OK
+[1]  ○ Compiling / ...
+[1]  ✓ Compiled / in 10s (287 modules)
+[1]  ✓ Compiled in 464ms (287 modules)
+[0] INFO:     172.31.128.146:47226 - "GET / HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:47226 - "GET / HTTP/1.1" 200 OK
+[1]  GET / 200 in 24ms
+[1]  GET / 200 in 11ms
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=chanel
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=chanel
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=chanel
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.2.4:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Armaf+Club+De+Nuit+Intensemen
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Armaf+Club+De+Nuit+Intensemen
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Armaf+Club+De+Nuit+Intensemen
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.2.4:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Armaf+Club+De+Nuit
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Armaf+Club+De+Nuit
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Armaf+Club+De+Nuit
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.2.4:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Armaf+Club+De+Nuit
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Armaf+Club+De+Nuit
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Armaf+Club+De+Nuit
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] WARNING:__main__:FragranceX returned status 404
+[0] INFO:     10.84.2.4:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Club+De+Nuit+Intense
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Club+De+Nuit+Intense
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Club+De+Nuit+Intense
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.2.4:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:42700 - "GET / HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:42700 - "GET / HTTP/1.1" 200 OK
+[1]  GET / 200 in 23ms
+[1]  GET / 200 in 18ms
+[0] INFO:     172.31.128.146:60620 - "GET / HTTP/1.1" 200 OK
+^C[0] INFO:     Shutting down
+[1] 
+[1] next dev -p 3000 exited with code SIGINT
+[0] INFO:     Finished server process [935]
+[0] ERROR:    Traceback (most recent call last):
+[0]   File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+[0]     await receive()
+[0]   File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 137, in receive
+[0]     return await self.receive_queue.get()
+[0]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0]   File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/asyncio/queues.py", line 158, in get
+[0]     await getter
+[0] asyncio.exceptions.CancelledError
+[0] 
+[0] python main.py exited with code SIGINT
+
+~/workspace$ npm run dev
+
+> perfume-price-comparator@1.0.0 dev
+> concurrently "python main.py" "next dev -p 3000"
+
+[1]   ▲ Next.js 14.2.29
+[1]   - Local:        http://localhost:3000
+[1] 
+[1]  ✓ Starting...
+[0] INFO:     Started server process [1624]
+[0] INFO:     Waiting for application startup.
+[0] INFO:     Application startup complete.
+[0] INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
+[1]  ✓ Ready in 2.4s
+[1]  ○ Compiling / ...
+[1]  ✓ Compiled / in 5.2s (287 modules)
+[1]  ✓ Compiled in 408ms (287 modules)
+[1]  GET / 200 in 5796ms
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=club-de-nuit-intense-for-men
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=club-de-nuit-intense-for-men
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=club-de-nuit-intense-for-men
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.5.3:0 - "POST /search HTTP/1.1" 200 OK
+[1]  ✓ Compiled in 593ms (287 modules)
+[1]  GET / 200 in 69ms
+[0] INFO:     172.31.128.146:57236 - "GET / HTTP/1.1" 200 OK
+[1]  GET / 200 in 12ms
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=chanel
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=chanel
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=chanel
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.4.32:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Club+De+Nuit+Intense+Cologne+for+Men
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Club+De+Nuit+Intense+Cologne+for+Men
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Club+De+Nuit+Intense+Cologne+for+Men
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.8.23:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Club+De+Nuit+Intense+Cologne
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Club+De+Nuit+Intense+Cologne
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Club+De+Nuit+Intense+Cologne
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] WARNING:__main__:FragranceX returned status 404
+[0] INFO:     10.84.8.23:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Club
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Club
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Club
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.8.23:0 - "POST /search HTTP/1.1" 200 OK
+[0] INFO:     172.31.128.146:45914 - "GET / HTTP/1.1" 200 OK
+[1]  GET / 200 in 13ms
+[0] INFO:__main__:Scraping FragranceNet: https://www.fragrancenet.com/search?searchTerm=Versace+Bright+Crystal+Perfume
+[0] INFO:__main__:Scraping FragranceX: https://www.fragrancex.com/search?q=Versace+Bright+Crystal+Perfume
+[0] INFO:__main__:Scraping FragranceShop: https://www.fragranceshop.com/search?q=Versace+Bright+Crystal+Perfume
+[0] WARNING:__main__:FragranceNet returned status 403
+[0] WARNING:__main__:FragranceX returned status 404
+[0] WARNING:__main__:FragranceShop returned status 415
+[0] INFO:     10.84.8.23:0 - "POST /search HTTP/1.1" 200 OK
+^C[0] INFO:     Shutting down
+[1] 
+[1] next dev -p 3000 exited with code SIGINT
+[0] INFO:     Finished server process [1624]
+[0] ERROR:    Traceback (most recent call last):
+[0]   File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+[0]     await receive()
+[0]   File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 137, in receive
+[0]     return await self.receive_queue.get()
+[0]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0]   File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/asyncio/queues.py", line 158, in get
+[0]     await getter
+[0] asyncio.exceptions.CancelledError
+[0] 
+[0] python main.py exited with code SIGINT
