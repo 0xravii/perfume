@@ -176,32 +176,14 @@ SITES = {
     "FragranceNet": {
         "base_url": "https://www.fragrancenet.com",
         "search_url": "https://www.fragrancenet.com/search?searchTerm={query}",
-        "selectors": {
-            "products": ".product-item",
-            "name": ".product-name",
-            "price": ".price",
-            "image": ".product-image img"
-        }
     },
     "FragranceX": {
         "base_url": "https://www.fragrancex.com",
         "search_url": "https://www.fragrancex.com/search?q={query}",
-        "selectors": {
-            "products": ".product",
-            "name": ".product-title",
-            "price": ".price-current",
-            "image": ".product-image img"
-        }
     },
     "FragranceShop": {
         "base_url": "https://www.fragranceshop.com",
-        "search_url": "https://www.fragranceshop.com/search?q={query}",
-        "selectors": {
-            "products": ".product-item",
-            "name": ".product-name",
-            "price": ".price",
-            "image": ".product-image img"
-        }
+        "search_url": "https://www.fragranceshop.com/search/{query}",
     }
 }
 
@@ -274,6 +256,75 @@ class PerfumeScraper:
             return round(price / size_value, 2)
         return None
     
+    async def scrape_product_url(self, url: str) -> Optional[PriceResult]:
+        """Scrape a specific product URL"""
+        try:
+            async with self.session.get(url) as response:
+                if response.status != 200:
+                    logger.warning(f"Failed to fetch product URL: {response.status}")
+                    return None
+                
+                html = await response.text()
+                soup = BeautifulSoup(html, 'html.parser')
+                
+                # Extract product details from the page
+                name = ""
+                price = None
+                size = None
+                image_url = ""
+                
+                # Try to find product name
+                name_selectors = ['h1', '.product-title', '.product-name', '[data-testid="product-name"]']
+                for selector in name_selectors:
+                    name_elem = soup.select_one(selector)
+                    if name_elem:
+                        name = name_elem.get_text(strip=True)
+                        break
+                
+                # Try to find price
+                price_selectors = ['.price', '.product-price', '[data-testid="price"]', '.current-price']
+                for selector in price_selectors:
+                    price_elem = soup.select_one(selector)
+                    if price_elem:
+                        price_text = price_elem.get_text(strip=True)
+                        price = self.extract_price(price_text)
+                        if price:
+                            break
+                
+                # Extract size from name or page content
+                size = self.extract_size(name) or self.extract_size(soup.get_text())
+                
+                # Try to find image
+                img_selectors = ['.product-image img', '.main-image img', '[data-testid="product-image"]']
+                for selector in img_selectors:
+                    img_elem = soup.select_one(selector)
+                    if img_elem and img_elem.get('src'):
+                        image_url = img_elem['src']
+                        if image_url.startswith('/'):
+                            # Extract domain from URL
+                            from urllib.parse import urlparse
+                            parsed = urlparse(url)
+                            image_url = f"{parsed.scheme}://{parsed.netloc}{image_url}"
+                        break
+                
+                if price and name:
+                    price_per_ml = self.calculate_price_per_ml(price, size) if size else None
+                    
+                    return PriceResult(
+                        site=urlparse(url).netloc,
+                        price=price,
+                        size=size,
+                        price_per_ml=price_per_ml,
+                        url=url,
+                        stock_status="Available",
+                        image_url=image_url
+                    )
+                    
+        except Exception as e:
+            logger.error(f"Error scraping product URL {url}: {e}")
+        
+        return None
+
     async def scrape_site(self, site_name: str, site_config: Dict, query: str) -> List[PriceResult]:
         """Scrape a single site for perfume prices"""
         results = []
@@ -290,45 +341,79 @@ class PerfumeScraper:
                 html = await response.text()
                 soup = BeautifulSoup(html, 'html.parser')
                 
-                products = soup.select(site_config["selectors"]["products"])[:5]  # Limit to 5 results per site
+                # Use more generic selectors that are likely to work
+                product_selectors = [
+                    '.product-item', '.product', '.item', '.product-card',
+                    '[data-testid="product"]', '.search-result-item'
+                ]
+                
+                products = []
+                for selector in product_selectors:
+                    products = soup.select(selector)[:5]
+                    if products:
+                        break
+                
+                # If no products found with specific selectors, try a more generic approach
+                if not products:
+                    # Look for elements that contain price patterns
+                    price_pattern = re.compile(r'\$\d+', re.I)
+                    potential_products = soup.find_all(['div', 'article', 'li'], 
+                                                     string=price_pattern, limit=5)
+                    products = potential_products
                 
                 for product in products:
                     try:
-                        name_elem = product.select_one(site_config["selectors"]["name"])
-                        price_elem = product.select_one(site_config["selectors"]["price"])
-                        image_elem = product.select_one(site_config["selectors"]["image"])
+                        # Try multiple selectors for name
+                        name = ""
+                        name_selectors = ['.product-name', '.title', 'h3', 'h4', '.name', 'a[title]']
+                        for selector in name_selectors:
+                            name_elem = product.select_one(selector)
+                            if name_elem:
+                                name = name_elem.get_text(strip=True)
+                                if name:
+                                    break
                         
-                        if not name_elem or not price_elem:
-                            continue
+                        # Try multiple selectors for price
+                        price = None
+                        price_selectors = ['.price', '.cost', '.amount', '.current-price', '[data-price]']
+                        for selector in price_selectors:
+                            price_elem = product.select_one(selector)
+                            if price_elem:
+                                price_text = price_elem.get_text(strip=True)
+                                price = self.extract_price(price_text)
+                                if price:
+                                    break
                         
-                        name = name_elem.get_text(strip=True)
-                        price_text = price_elem.get_text(strip=True)
-                        price = self.extract_price(price_text)
-                        
+                        # If still no price, search in the entire product text
                         if not price:
+                            product_text = product.get_text()
+                            price = self.extract_price(product_text)
+                        
+                        if not price or not name:
                             continue
                         
-                        # Extract size from name or other elements
-                        size = self.extract_size(name)
+                        # Extract size from name or product text
+                        size = self.extract_size(name) or self.extract_size(product.get_text())
                         price_per_ml = self.calculate_price_per_ml(price, size) if size else None
                         
                         # Get product URL
+                        product_url = search_url  # Default to search URL
                         link_elem = product.find('a')
-                        product_url = ""
                         if link_elem and link_elem.get('href'):
                             href = link_elem['href']
                             if href.startswith('/'):
                                 product_url = site_config["base_url"] + href
-                            else:
+                            elif href.startswith('http'):
                                 product_url = href
                         
                         # Get image URL
                         image_url = ""
-                        if image_elem and image_elem.get('src'):
-                            src = image_elem['src']
+                        img_elem = product.find('img')
+                        if img_elem and img_elem.get('src'):
+                            src = img_elem['src']
                             if src.startswith('/'):
                                 image_url = site_config["base_url"] + src
-                            else:
+                            elif src.startswith('http'):
                                 image_url = src
                         
                         result = PriceResult(
@@ -337,10 +422,13 @@ class PerfumeScraper:
                             size=size,
                             price_per_ml=price_per_ml,
                             url=product_url,
-                            stock_status="In Stock",  # Simplified for now
+                            stock_status="In Stock",
                             image_url=image_url
                         )
                         results.append(result)
+                        
+                        if len(results) >= 3:  # Limit results per site
+                            break
                         
                     except Exception as e:
                         logger.error(f"Error processing product from {site_name}: {e}")

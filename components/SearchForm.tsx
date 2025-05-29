@@ -25,7 +25,7 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
             type="text"
             value={perfumeName}
             onChange={(e) => setPerfumeName(e.target.value)}
-            placeholder="Enter perfume name (e.g., Chanel No. 5, Dior Sauvage)"
+            placeholder="Enter perfume name or product URL (e.g., Chanel No. 5, Dior Sauvage)"
             className="w-full pl-12 pr-32 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-all duration-200"
             disabled={loading}
           />
@@ -49,7 +49,7 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
       
       <div className="mt-4 text-center">
         <p className="text-sm text-gray-500">
-          We search across FragranceNet, FragranceX, FragranceShop and more
+          Search by name across multiple sites or paste a direct product URL
         </p>
       </div>
     </div>
