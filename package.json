@@ -1,0 +1,31 @@
+
+{
+  "name": "perfume-price-comparator",
+  "version": "1.0.0",
+  "description": "Hipmunk-style perfume price comparison tool",
+  "scripts": {
+    "dev": "concurrently \"python main.py\" \"next dev -p 3000\"",
+    "build": "next build",
+    "start": "next start",
+    "backend": "python main.py",
+    "frontend": "next dev -p 3000"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "axios": "^1.6.0",
+    "@headlessui/react": "^1.7.0",
+    "@heroicons/react": "^2.0.0",
+    "tailwindcss": "^3.3.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
