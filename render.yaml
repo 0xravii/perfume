@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: perfume-price-comparator
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run dev:frontend
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  - type: web
+    name: perfume-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
